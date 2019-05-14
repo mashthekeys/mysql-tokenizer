@@ -1,6 +1,6 @@
 {
   "name": "mysql-tokenizer",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Replacement for sql-tokenizer which supports Mysql syntax.  Also provides an experimental utility for structuring tokens into SQL statements.",
   "main": "index.js",
   "scripts": {
