@@ -1,0 +1,29 @@
+{
+  "name": "mysql-tokenizer",
+  "version": "1.0.0",
+  "description": "Replacement for sql-tokenizer which supports Mysql syntax.",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test/tokenizer.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mashthekeys/mysql-tokenizer.git"
+  },
+  "keywords": [
+    "mysql",
+    "tokenizer",
+    "sql",
+    "parser"
+  ],
+  "author": "Andy Holland",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mashthekeys/mysql-tokenizer/issues"
+  },
+  "homepage": "https://github.com/mashthekeys/mysql-tokenizer#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "chalk": "^2.4.2"
+  }
+}
