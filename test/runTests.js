@@ -12,12 +12,18 @@ const defaultWidth = 60;
 const optionDefaults = {haltOnFail: false, quiet: false, verbose: true, width: 'auto'};
 
 function matchError(error, actualError) {
-    return error !== undefined && actualError !== undefined;
+    if (typeof error === 'function') {
+        return actualError !== undefined && actualError.constructor === error;
+    }
+
+    return JSON.stringify(error) === JSON.stringify(actualError);
 }
 
 function errorAt(string, pos) {
     string = String(string);
-    return string.substr(0, pos) + chalk.redBright(string.substr(pos));
+    // if (pos + 1 >= string.length) return string;
+    // if (pos == 0) return "!";
+    return string.substr(0, pos) +'\n'+ chalk.redBright(string.substr(pos));
 }
 
 
@@ -30,8 +36,8 @@ function runTestsAndExit(tests, options) {
     process.exit(allPass ? 0 : 1);
 }
 function runTests(tests, options) {
-    options = Object.assign({}, options || {}, optionDefaults);
-    console.log('runTests', options.width);
+    options = Object.assign({}, optionDefaults, options || {});
+    // console.log('runTests', options);
 
     let allPass = true;
     let nTests = 0;
@@ -49,6 +55,18 @@ function runTests(tests, options) {
 
     }
 
+    /** @return string */
+    function JSON_stringifyAndTruncate(value, maxLength) {
+        const json = JSON.stringify(value);
+        if (json.length <= maxLength) {
+            return value;
+        }
+        return `Truncated JSON({length: ${json.length}, initial: '${chalk.underline(json.substr(0,maxLength).replace(/'/g, "\\'"))}'})`;
+    }
+
+    function showError(error) {
+        return typeof error === 'function' ? error.name : JSON.stringify(error);
+    }
 
     tests.forEach(test => {
         if (!allPass && options.haltOnFail) return;
@@ -59,7 +77,7 @@ function runTests(tests, options) {
             console.log(chalk.gray(''.padEnd(options.width, '-')));
             if (options.verbose) {
                 console.log(chalk.bold(`Test ${name}`));
-                console.log(chalk.gray(`Arguments ${JSON.stringify(test.arguments)}`));
+                console.log(chalk.gray(`Arguments ${JSON_stringifyAndTruncate(test.arguments, 512)}`));
             }
         }
 
@@ -83,7 +101,7 @@ function runTests(tests, options) {
 
         if (error !== undefined) {
             // Error expected
-            pass = matchError(error, actualError) !== undefined;
+            pass = matchError(error, actualError);
 
         } else if (actualOutput === undefined) {
             // Output expected
@@ -102,35 +120,48 @@ function runTests(tests, options) {
         if (!options.quiet) {
             console.log(chalk[pass ? 'green' : 'redBright'](`Test ${name}    ${chalk.bold(pass ? 'Success' : 'FAILED')}`));
 
-            let diffPos = outputSerialized.length;
-
-            if (!pass) {
-                if (error !== undefined) {
-                    console.log(`Expected Error:  ${JSON.stringify(error)}`);
-                } else {
-                    if (actualOutputSerialized !== undefined) {
-                        diffPos = outputSerialized.split('').reduce((diffPos, value, index) => {
-                            if (diffPos === undefined) {
-                                if (value === actualOutputSerialized[index]) {
-                                    return undefined;
-                                } else {
-                                    // console.log(chalk.redBright(`${value} !== ${actualOutputSerialized[index]}`));
-                                    return index;
-                                }
-                            }
-                            return diffPos;
-                        }, undefined);
+            let diffPos = outputSerialized != null ? outputSerialized.length : 0;
+            if (actualOutputSerialized !== undefined) {
+                diffPos = (outputSerialized === undefined ? '' : outputSerialized).split('').reduce((diffPos, value, index) => {
+                    if (diffPos === undefined) {
+                        if (value === actualOutputSerialized[index]) {
+                            return undefined;
+                        } else {
+                            // console.log(chalk.redBright(`${value} !== ${actualOutputSerialized[index]}`));
+                            return index;
+                        }
                     }
-
-                    console.log(`Expected Output:\n${errorAt(outputSerialized, diffPos)}`);
-                }
+                    return diffPos;
+                }, undefined);
             }
+
             if (!pass || options.verbose) {
-                console.log(`Actual Error:    ${chalk[actualError ? 'redBright' : 'gray'](String(actualError))}`);
-                actualError && console.error(actualError);
-                console.log(`Actual Output:\n${errorAt(actualOutputSerialized, diffPos)}`);
-                if (!pass && diffPos < options.width) {
-                    console.log(chalk.redBright('^'.padStart(diffPos + 1)));
+                if (error !== undefined) {
+                    // Expected error
+                    console.log(`Expected Error:  ${showError(error)}`);
+                    console.log(`Actual Output:\n${chalk[pass ? 'gray' : 'redBright'](actualOutputSerialized, 0)}`);
+                    console.log(`Actual Error:    ${chalk[pass ? 'gray' : 'redBright'](showError(actualError))}`);
+                    if (!pass && actualError) {
+                        console.error(actualError);
+                    }
+                } else {
+                    // Expected output
+
+                    if (pass) {
+                        console.log(`Expected Output:\n${outputSerialized}`);
+                        console.log(`Actual Output:\n${actualOutputSerialized}`);
+                    } else {
+                        console.log(`Expected Output:\n${errorAt(outputSerialized, diffPos)}`);
+                        console.log(`Actual Output:\n${errorAt(actualOutputSerialized, diffPos)}`);
+
+                        if (actualOutput !== undefined && diffPos < options.width) {
+                            console.log(chalk.redBright('^'.padStart(diffPos + 1)));
+                        }
+                        if (actualError) {
+                            console.log(`Actual Error:    ${chalk.redBright(String(actualError))}`);
+                            console.error(actualError);
+                        }
+                    }
                 }
             }
             console.log('');

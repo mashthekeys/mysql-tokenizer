@@ -1,0 +1,22 @@
+Mysql-Tokenizer 1.0.0
+=====================
+Tokenizer tested and working.
+
+Mysql-Tokenizer 1.0.1
+=====================
+Adding Structured Tokenizer – experimental feature (not stable).
+
+Mysql-Tokenizer 1.0.2
+=====================
+Removed debugging code.
+
+Mysql-Tokenizer 1.0.3
+=====================
+Fixed bug in index.
+
+Mysql-Tokenizer 1.0.4
+=====================
+Total rewrite of the token parser to support '@' before 
+identifiers and '.' between identifiers.
+
+Enhanced tokenizer tests with more syntax edge cases.
