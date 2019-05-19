@@ -20,3 +20,11 @@ Total rewrite of the token parser to support '@' before
 identifiers and '.' between identifiers.
 
 Enhanced tokenizer tests with more syntax edge cases.
+
+Mysql-Tokenizer 1.0.5
+=====================
+Fixed bug where comments were not identified directly after operators.
+
+Token parser internals rewritten for more flexibility.
+
+New options for regExp and commentHandler.

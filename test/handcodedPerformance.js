@@ -34,9 +34,9 @@ const testBank = [
     "b", "b'101'", "X'1234'", 'xylophone', 'BINARY',
     // Strings which should match Quote
     '"', "'", '`', '`1234`', "'...'",
-    // Strings which should match InitialCommentChar and Comment
+    // Strings which should match PossibleComment and Comment
     '/*...*/', '#1234', '--    ', '--\n', '--', '/*',
-    // Strings which should match InitialCommentChar but /not/ Comment
+    // Strings which should match PossibleComment but /not/ Comment
     '/', '/1', '/-', '-', '-0', '--blah',
     // Strings which should match Whitespace
     ' ', '\t', '\r', '\n', '\r\n', ' 1234 5678 qwertyuiop'

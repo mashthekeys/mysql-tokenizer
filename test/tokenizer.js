@@ -6,7 +6,7 @@ const runTestsAndExit = require('./runTests').runTestsAndExit;
 
 const testSet = require('./data/tokenizer-set');
 
-const testOptions = {haltOnFail: false, quiet: false, verbose: true, width: 'auto'};
+const testOptions = {haltOnFail: true, quiet: false, verbose: true, width: 'auto'};
 
 console.log(testOptions);
 

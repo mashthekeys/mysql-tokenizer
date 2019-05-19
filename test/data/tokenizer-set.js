@@ -238,6 +238,18 @@ module.exports = exports.default = (mysqlTokenize => [
         ]
     },
     {
+        name: "Operators and Comments",
+        function: mysqlTokenize,
+        arguments: ["SELECT 1-/*-*/2-- \n*#\n3/*(*///*)*/4>5<<6&7\nFROM dual"],
+        output: [
+            "SELECT", " ",
+            "1", "-", "/*-*/", "2", "-- ", "\n",
+            "*", "#", "\n",
+            "3", "/*(*/", "/", "/*)*/", "4", ">", "5", "<<", "6", "&", "7", "\n",
+            "FROM", " ", "dual"
+        ]
+    },
+    {
         name: "Parentheses",
         function: mysqlTokenize,
         arguments: ["SELECT (((((1+2)*3)/4)>5)<<6)&7 FROM dual"],
