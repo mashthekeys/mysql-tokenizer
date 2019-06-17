@@ -576,16 +576,10 @@ module.exports = exports.default = (mysqlTokenize => [
         output: ["SELECT", " ", "@♡.♡", " ", ":=", " ", "':love:'", ";"]
     },
     {
-        name: "SET Using Unicode Non-BMP (Emoji)",
+        name: "SET Using Unicode Non-BMP (Invalid)",
         function: mysqlTokenize,
         arguments: ["SELECT @😍 := ':love:';"],
-        output: ["SELECT", " ", "@😍", " ", ":=", " ", "':love:'", ";"]
-    },
-    {
-        name: "SET and SELECT Using Unicode Non-BMP (Emoji)",
-        function: mysqlTokenize,
-        arguments: ["SELECT @😍;\nSET @😍 := ':love:';"],
-        output: ["SELECT", " ", "@😍", ";", "\n", "SET", " ", "@😍", " ", ":=", " ", "':love:'", ";"]
+        output: ["SELECT", " ", ["@"], ["😍"], " ", ":=", " ", "':love:'", ";"]
     },
     {
         name: "Labelled Loop 1",
@@ -630,16 +624,16 @@ module.exports = exports.default = (mysqlTokenize => [
         output: ["SELECT", " ", "☼", ".", "♡", " ", "FROM", " ", "(", "SELECT", " ", "'love'", " ", "AS", " ", "♡", ")", " ", "☼", ";"]
     },
     {
-        name: "Identifier, Unicode Non-BMP (Emoji)",
+        name: "Identifier, Unicode Non-BMP (Invalid)",
         function: mysqlTokenize,
         arguments: ["SELECT 😍 FROM (SELECT 'love' AS 😍) 🌞;"],
-        output: ["SELECT", " ", "😍", " ", "FROM", " ", "(", "SELECT", " ", "'love'", " ", "AS", " ", "😍", ")", " ", "🌞", ";"]
+        output: ["SELECT", " ", ["😍"], " ", "FROM", " ", "(", "SELECT", " ", "'love'", " ", "AS", " ", ["😍"], ")", " ", ["🌞"], ";"]
     },
     {
-        name: "Identifier, Dotted, Unicode Non-BMP (Emoji)",
+        name: "Identifier, Dotted, Unicode Non-BMP (Invalid)",
         function: mysqlTokenize,
         arguments: ["SELECT 🌞.😍 FROM (SELECT 'love' AS 😍) 🌞;"],
-        output: ["SELECT", " ", "🌞", ".", "😍", " ", "FROM", " ", "(", "SELECT", " ", "'love'", " ", "AS", " ", "😍", ")", " ", "🌞", ";"]
+        output: ["SELECT", " ", ["🌞"], ".", ["😍"], " ", "FROM", " ", "(", "SELECT", " ", "'love'", " ", "AS", " ", ["😍"], ")", " ", ["🌞"], ";"]
     },
     {
         name: "Dotted Identifier, Basic",
