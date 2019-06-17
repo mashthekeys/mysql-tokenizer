@@ -28,3 +28,9 @@ Fixed bug where comments were not identified directly after operators.
 Token parser internals rewritten for more flexibility.
 
 New options for regExp and commentHandler.
+
+Mysql-Tokenizer 1.0.6
+=====================
+Fixed bug where '$' was incorrectly matched as punctuation and not the start of an identifier.
+
+Fixed bug where backslash was not properly escaped by backslash.

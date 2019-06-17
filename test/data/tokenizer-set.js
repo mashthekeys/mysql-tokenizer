@@ -110,10 +110,34 @@ module.exports = exports.default = (mysqlTokenize => [
         output: ["SELECT", " ", "`back``tickX2`", " ", "FROM", " ", "dual"]
     },
     {
-        name: "Escaped Single Quotes",
+        name: "Escaped Single Quotes 1",
         function: mysqlTokenize,
         arguments: ["SELECT 'single\\'quoteEscaped' FROM dual"],
         output: ["SELECT", " ", "'single\\'quoteEscaped'", " ", "FROM", " ", "dual"]
+    },
+    {
+        name: "Escaped Single Quotes 2",
+        function: mysqlTokenize,
+        arguments: ["SELECT '\\'' FROM dual"],
+        output: ["SELECT", " ", "'\\''", " ", "FROM", " ", "dual"]
+    },
+    {
+        name: "Escaped Single Quotes 3",
+        function: mysqlTokenize,
+        arguments: ["SELECT '\\\\' FROM dual"],
+        output: ["SELECT", " ", "'\\\\'", " ", "FROM", " ", "dual"]
+    },
+    {
+        name: "Escaped Single Quotes 4",
+        function: mysqlTokenize,
+        arguments: ["SELECT '\\\\\\'' FROM dual"],
+        output: ["SELECT", " ", "'\\\\\\''", " ", "FROM", " ", "dual"]
+    },
+    {
+        name: "Escaped Single Quotes 5",
+        function: mysqlTokenize,
+        arguments: ["SELECT '\\`\\\"' FROM dual"],
+        output: ["SELECT", " ", "'\\`\\\"'", " ", "FROM", " ", "dual"]
     },
     {
         name: "Escaped Double Quotes",
@@ -584,29 +608,35 @@ module.exports = exports.default = (mysqlTokenize => [
     {
         name: "Invalid SQL, Junk Characters, ASCII [ ]",
         function: mysqlTokenize,
-        arguments: ["SELECT ][ damaged-sql ][;"],
-        output: ["SELECT", " ", ["]"], ["["], " ", "damaged", "-", "sql", " ", ["]"], ["["], ";"]
+        arguments: ["SELECT ][damaged-sql][;"],
+        output: ["SELECT", " ", ["]"], ["["], "damaged", "-", "sql", ["]"], ["["], ";"]
     },
     {
-        name: "SELECT, Unicode BMP",
+        name: "Identifier, ASCII Gamut",
+        function: mysqlTokenize,
+        arguments: ["SELECT 0 AS $0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz;"],
+        output: ["SELECT", " ", "0", " ", "AS", " ", "$0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz", ";"]
+    },
+    {
+        name: "Identifier, Unicode BMP",
         function: mysqlTokenize,
         arguments: ["SELECT ♡ FROM (SELECT 'love' AS ♡) ☼;"],
         output: ["SELECT", " ", "♡", " ", "FROM", " ", "(", "SELECT", " ", "'love'", " ", "AS", " ", "♡", ")", " ", "☼", ";"]
     },
     {
-        name: "SELECT, Dotted, Unicode BMP",
+        name: "Identifier, Dotted, Unicode BMP",
         function: mysqlTokenize,
         arguments: ["SELECT ☼.♡ FROM (SELECT 'love' AS ♡) ☼;"],
         output: ["SELECT", " ", "☼", ".", "♡", " ", "FROM", " ", "(", "SELECT", " ", "'love'", " ", "AS", " ", "♡", ")", " ", "☼", ";"]
     },
     {
-        name: "SELECT, Unicode Non-BMP (Emoji)",
+        name: "Identifier, Unicode Non-BMP (Emoji)",
         function: mysqlTokenize,
         arguments: ["SELECT 😍 FROM (SELECT 'love' AS 😍) 🌞;"],
         output: ["SELECT", " ", "😍", " ", "FROM", " ", "(", "SELECT", " ", "'love'", " ", "AS", " ", "😍", ")", " ", "🌞", ";"]
     },
     {
-        name: "SELECT, Dotted, Unicode Non-BMP (Emoji)",
+        name: "Identifier, Dotted, Unicode Non-BMP (Emoji)",
         function: mysqlTokenize,
         arguments: ["SELECT 🌞.😍 FROM (SELECT 'love' AS 😍) 🌞;"],
         output: ["SELECT", " ", "🌞", ".", "😍", " ", "FROM", " ", "(", "SELECT", " ", "'love'", " ", "AS", " ", "😍", ")", " ", "🌞", ";"]
