@@ -34,3 +34,9 @@ Mysql-Tokenizer 1.0.6
 Fixed bug where '$' was incorrectly matched as punctuation and not the start of an identifier.
 
 Fixed bug where backslash was not properly escaped by backslash.
+
+Mysql-Tokenizer 1.0.7
+=====================
+Corrected handling of non-BMP characters, both quoted and unquoted.
+
+Added options to Parser.create to override quote and Unicode handling.
