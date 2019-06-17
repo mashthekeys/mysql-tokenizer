@@ -522,6 +522,30 @@ module.exports = exports.default = (mysqlTokenize => [
         output: ["SELECT", " ", "'😀'", ";"]
     },
     {
+        name: "Double Quotes, Unicode BMP",
+        function: mysqlTokenize,
+        arguments: ["SELECT \"♡\";"],
+        output: ["SELECT", " ", "\"♡\"", ";"]
+    },
+    {
+        name: "Double Quotes, Unicode Non-BMP (Emoji)",
+        function: mysqlTokenize,
+        arguments: ["SELECT \"😀\";"],
+        output: ["SELECT", " ", "\"😀\"", ";"]
+    },
+    {
+        name: "Backticks, Unicode BMP",
+        function: mysqlTokenize,
+        arguments: ["SELECT 1 `♡`;"],
+        output: ["SELECT", " ", "1", " ", "`♡`", ";"]
+    },
+    {
+        name: "Backticks, Unicode Non-BMP (Invalid)",
+        function: mysqlTokenize,
+        arguments: ["SELECT 'Sol' `🌞`;"],
+        output: ["SELECT", " ", "'Sol'", " ", ["`🌞`"], ";"]
+    },
+    {
         name: "JSON Table",
         function: mysqlTokenize,
         arguments: [`SELECT * FROM JSON_TABLE('["1","2","3"]', '$[*]' COLUMNS(value VARCHAR(100) PATH '$')) AS JT1`],
